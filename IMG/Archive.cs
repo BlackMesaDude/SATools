@@ -242,15 +242,10 @@ namespace SATools.IMG
                             cOffset += eLen; // go to next offset
                         }
 
-                        /*
-                            for each entry inside the new entries list
-
-                            TODO: replace foreach with a non-resource-heavy loop
-                        */
-                        foreach (Types.ArchiveEntry cEntry in nEntries)
+                        //for every entry inside the new entries list
+                        for(int i = 0; i < nEntries.Count; i++)
                         {
-                            /// while the stream length isn't at at the current entry offset
-                            while (this._stream.Length < cEntry.Offset)
+                            while (this._stream.Length < nEntries[i].Offset)
                             {
                                 this._stream.WriteByte(0); // write a byte with the value of 0 until the cEntry offset is reached
                             }
@@ -258,7 +253,7 @@ namespace SATools.IMG
                             if (entry != null)
                             {
                                 // if the entry name is equal to the current entry name
-                                if (entry.FullName == cEntry.FullName)
+                                if (entry.FullName == nEntries[i].FullName)
                                 {
                                     byte[] buffer = new byte[_stream.Length]; // create a buffer based on the stream length
 
@@ -269,15 +264,14 @@ namespace SATools.IMG
                                 }
                                 else
                                 {
-                                    WriteEntry(tArchive, cEntry, this._stream); // add a new entry
+                                    WriteEntry(tArchive, nEntries[i], this._stream); // add a new entry
                                 }
                             }
                             else
                             {
-                                WriteEntry(tArchive, cEntry, this._stream); // add a new entry
+                                WriteEntry(tArchive, nEntries[i], this._stream); // add a new entry
                             }
                         }
-
                         // while the stream length / 2048 doesnt exceed the current offset 
                         while ((this._stream.Length / 2048) < cOffset)
                         {
