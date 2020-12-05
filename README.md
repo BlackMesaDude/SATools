@@ -39,6 +39,8 @@ The library is on a costant update and always announces changes and issues allow
 
 ## How it works
 
+For any development purpose, please visit the wiki!
+
 ### The IMG Archive
 
 Rockstar's first approach to data archiviation was a separation between a **directory entry** and a **image entry**, this meas that the directory would contain *all the contents needed* meanwhile the *image leads to them*. Apparently a **compression** approach was also taken to decrease the archive size, it was similiar to the [lzo](https://it.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Oberhumer) standard back at the time. 
