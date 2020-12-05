@@ -5,13 +5,12 @@
    * [Introduction](#SATools)
       * [Why this library](#why-this-library)
       * [What's out of the box?](#whats-out-of-the-box)
-            * [Notes on the support](#notes-on-the support)
-      * [Offerings](#offerings)
-      * [How it works](#how-it-works)
-              * [The IMG Archive](#the-img-archive)
-                  * [Header](#header)
-                  * [Directory Entry (Directory Block)](#directory-entry-directory-block)
-   * [ToDo](#todo)
+      * [Notes on the support](#notes-on-the support)
+   * [Offerings](#offerings)
+   * [How it works](#how-it-works)
+   * [The IMG Archive](#the-img-archive)
+       * [Header](#header)
+       * [Directory Entry (Directory Block)](#directory-entry-directory-block)
 <!--te-->
 
 **SATools** (or *San Andreas Tools*) is a ```C#.Net``` based library made for the next mod developer that wants an easy way to access **GTA:SA resources**, such as archives or backend scipting files.
