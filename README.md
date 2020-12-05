@@ -1,4 +1,4 @@
-# SATools <img src="https://img.shields.io/badge/Version-1.0-informational" /> <img src="https://img.shields.io/badge/License-GPL%20v2.0-informational" /> ![.NET Core](https://github.com/BlackMesaDude/SATools/workflows/.NET%20Core/badge.svg)
+# SATools <a href="https://github.com/BlackMesaDude/SATools/releases"><img src="https://img.shields.io/badge/Version-1.0-informational" /></a> <a href="https://github.com/BlackMesaDude/SATools/blob/main/README.md"><img src="https://img.shields.io/badge/License-GPL%20v2.0-informational" /></a> ![.NET Core](https://github.com/BlackMesaDude/SATools/workflows/.NET%20Core/badge.svg)
 
 ## Index
 <!--ts-->
