@@ -28,7 +28,7 @@ The table below represents the header values for the ```script.img```
 |-----------	|-----------	|-----------	|------------	|-----------	|-----------	|-----------	|-----------	|-----------	|
 | ```0x56```  | ```0x45``` 	| ```0x52``` 	| ```0x32``` 	| ```0x4F``` 	| ```0x00``` 	| ```0x00``` 	| ```0x00``` 	| ```...``` 	|
 
-where from column *0x00* to *0x04* would be the 4 chars for the version definition meanwhile *0x04* to *0x07* the total count of entries available in the archive.
+where from column *0x00* to *0x03* would be the 4 chars for the version definition meanwhile *0x04* to *0x07* the total count of entries available in the archive.
 
 ### Entry Block 
 
