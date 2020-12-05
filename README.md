@@ -5,7 +5,7 @@
    * [Introduction](#SATools)
       * [Why this library](#why-this-library)
       * [What's out of the box?](#whats-out-of-the-box)
-              * [Notes on the support](#notes-on-the support)
+            * [Notes on the support](#notes-on-the support)
       * [Offerings](#offerings)
       * [How it works](#how-it-works)
               * [The IMG Archive](#the-img-archive)
