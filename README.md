@@ -1,4 +1,4 @@
-# SATools
+# SATools <img src="https://img.shields.io/badge/Version-1.0-informational" /> <img src="https://img.shields.io/badge/License-GPL%20v2.0-informational" />
 
 ## Index
 <!--ts-->
