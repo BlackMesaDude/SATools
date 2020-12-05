@@ -18,7 +18,7 @@ using System.Text;
 using System.Collections.Generic;
 
 namespace SATools.IMG.Utility
-{    
+{
     /// <summary>
     /// Defines the structure of the archive
     /// </summary>
@@ -26,6 +26,15 @@ namespace SATools.IMG.Utility
     {
         public string[] ArchiveFiles;
         public string[] ArchiveRelatives;
+    }
+
+    public struct ArchiveHeaderData 
+    {
+        public byte[] Version;
+        public byte[] InternalData;
+
+        public byte[] DirectoryBlockData;
+        public byte[] RawNameData;
     }
 
     /// <summary>
@@ -278,7 +287,7 @@ namespace SATools.IMG.Utility
         /// <returns></returns>
         private Archive Open(string pathToArchive, Types.ArchiveMode mode, Encoding archiveEncoding)
         {
-            Archive tArchive = null; // temporary archive
+            Archive tArchive = null; // temporary archive that will contain the result
 
             try 
             {
@@ -306,85 +315,8 @@ namespace SATools.IMG.Utility
                         }
                         else 
                         {
-                            /* this section reads the header of the file based on each buffer sequentially */   
-
-                            byte[] version = new byte[4]; // version buffer
-                            if(tArchive.ArchiveStream.Read(version, 0, version.Length) == version.Length)
-                            {
-                                string rVersion = Encoding.UTF8.GetString(version); // reads the version buffer stream and converts it to a string
-
-                                byte[] inData = new byte[4]; // internal data buffer
-                                if(tArchive.ArchiveStream.Read(inData, 0, inData.Length) == inData.Length)
-                                {
-                                    uint entriesCount = ArchiveValues.GetEntriesCount(inData); // reads the internal data buffer and calculates the total entries
-
-                                    // if the archive version is VER2 and the archive stream length is greater equal to the calculated entries count * 8
-                                    if((rVersion == "VER2") && (tArchive.ArchiveStream.Length >= (entriesCount * 8)))
-                                    {
-                                        for(uint i = 0; i != entriesCount; i++) 
-                                        {
-                                            if(tArchive.ArchiveStream.Read(inData, 0, inData.Length) == inData.Length)
-                                            {
-                                                long offset = ArchiveValues.GetOffset(inData); // reads the offset from the internal buffer and get its based on the current segment
-
-                                                byte[] other = new byte[2]; // other data buffer
-                                                if(tArchive.ArchiveStream.Read(other, 0, other.Length) == other.Length)
-                                                {
-                                                    int length = (other[0] | (other[1] << 8)) * 2048; // defines the length of this buffer based on its data
-
-                                                    if(tArchive.ArchiveStream.Read(other, 0, other.Length) == other.Length)
-                                                    {
-                                                        byte[] rawName = new byte[24]; // defines the raw name of the file
-
-                                                        if(tArchive.ArchiveStream.Read(rawName, 0, rawName.Length) == rawName.Length)
-                                                        {
-                                                            int bName = ArchiveUtils.GetNullableStringBytes(rawName); // reads the name from the raw one and gets its nullable contents
-                                                            // if the literal name length is greater then 0
-                                                            if(bName > 0)
-                                                            {
-                                                                string name = tEncoding.GetString(rawName, 0, bName); // convert the raw name to a string literal based on the length of the calculated one
-                                                                tArchive.Entries.Add(name.ToLower(), new Types.ArchiveEntry(tArchive, offset, length, name)); // adds anew entry to the archive entries
-                                                            }
-                                                            else 
-                                                            {
-                                                                throw new InvalidDataException("An entry naming from the archive can't be empty.");
-                                                            }
-                                                        }
-                                                        else 
-                                                        {
-                                                            throw new InvalidDataException("An entry name seems to be missing.");
-                                                        }
-                                                    }
-                                                    else 
-                                                    {
-                                                        throw new InvalidDataException("An entry length seems to be missing.");
-                                                    }
-                                                }
-                                                else 
-                                                {
-                                                    throw new InvalidDataException("An entry length seems to be missing.");
-                                                }
-                                            }
-                                            else 
-                                            {
-                                                throw new InvalidDataException("An entry offset seems to be missing.");
-                                            }
-                                        }
-                                    }
-                                    else 
-                                    {
-                                        throw new InvalidDataException("The given archive uses a unknown version to this system.");
-                                    }
-                                }
-                                else 
-                                {
-                                    throw new InvalidDataException("The given file isn't an archive.");
-                                }
-                            }
-                            else 
-                            {
-                                throw new InvalidDataException("The given file isn't an archive.");
-                            }
+                            ArchiveHeaderData headerData; // creates a ArchiveHeaderData object that defines the containers for the data that later will be processed
+                            VerifyArchiveData(tArchive, out headerData, tEncoding); // verifies the header and each directory block based on the target archive and default encoding to headerData
                         }
                     }
                 }
@@ -407,6 +339,53 @@ namespace SATools.IMG.Utility
         }
 
         /// <summary>
+        /// Verifies every header data and directory entries based on the archive
+        /// </summary>
+        /// <param name="targetArchive">Which archive should be verified</param>
+        /// <param name="data">Where to store the processed data</param>
+        /// <param name="encoding">Default encoding for the verification readings</param>
+        /// <returns></returns>
+        private bool VerifyArchiveData(Archive targetArchive, out ArchiveHeaderData data, Encoding encoding)
+        {
+            data = new ArchiveHeaderData();
+
+            VerifyHeader(targetArchive.ArchiveStream, out data.Version, 4); // verifies the header version segment
+            string lVersion = Encoding.UTF8.GetString(data.Version); // converts the segment into a literal string
+
+            VerifyHeader(targetArchive.ArchiveStream, out data.InternalData, 4); // verifies the internal header data
+            uint entriesCount = ArchiveValues.GetEntriesCount(data.InternalData); // gets the total entries from the header internal segment
+
+            // checks if the version of the archive is VER2 and has entries available
+            if((lVersion == "VER2") && (targetArchive.ArchiveStream.Length >= (entriesCount * 8)))
+            {
+                for(uint i = 0; i != entriesCount; i++)
+                {
+                    VerifyHeader(targetArchive.ArchiveStream, out data.InternalData, 4); // verifies internal header data again
+                    long offset = ArchiveValues.GetOffset(data.InternalData); // gets the root directory offset from the internal data
+
+                    VerifyHeader(targetArchive.ArchiveStream, out data.DirectoryBlockData, 2); // verifies the directory block data
+                    int length = (data.DirectoryBlockData[0] | (data.DirectoryBlockData[1] << 8)) * DirectoryValues.MaximumLength; // gets the directory block length
+
+                    VerifyHeader(targetArchive.ArchiveStream, out data.DirectoryBlockData, 2); // verifies the directory block data again
+                    VerifyHeader(targetArchive.ArchiveStream, out data.RawNameData, 24); // gets the directory block raw name
+                    int nName = ArchiveUtils.GetNullableStringBytes(data.RawNameData); // checks the nullable literal string name based on the raw one
+
+                    if(nName > 0)
+                    {
+                        string name = encoding.GetString(data.RawNameData, 0, nName); // convert the raw name to a string literal based on the length of the calculated one
+                        targetArchive.Entries.Add(name.ToLower(), new Types.ArchiveEntry(targetArchive, offset, length, name)); // adds anew entry to the archive entries
+                    }
+                }
+
+                return true;
+            }
+            else 
+            {
+                throw new InvalidDataException("The given file isn't an archive or something is missing.");
+            }
+        }
+
+        /// <summary>
         /// Gets the default file length
         /// </summary>
         /// <param name="file">Path to file</param>
@@ -414,6 +393,19 @@ namespace SATools.IMG.Utility
         private long GetFileLength(string file) 
         {
             return new FileInfo(file).Length;
+        }
+        
+        /// <summary>
+        /// Verifies a specific header buffer based on the stream and size
+        /// </summary>
+        /// <param name="stream">Stream that contains the data</param>
+        /// <param name="buffer">Buffer where the data should be stored</param>
+        /// <param name="size">Size of the buffer</param>
+        /// <returns></returns>
+        internal bool VerifyHeader(Stream stream, out byte[] buffer, int size = 4)
+        {
+            buffer = new byte[size];  
+            return stream.Read(buffer, 0, buffer.Length) == buffer.Length;
         }
     }
 }
