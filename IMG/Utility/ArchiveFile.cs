@@ -28,6 +28,9 @@ namespace SATools.IMG.Utility
         public string[] ArchiveRelatives;
     }
 
+    /// <summary>
+    /// Defines the structure of the header data that resides inside the archive
+    /// </summary>
     public struct ArchiveHeaderData 
     {
         public byte[] Version;
@@ -59,6 +62,8 @@ namespace SATools.IMG.Utility
         }
 
         private ArchiveFileData _archiveData; // defines an archive data structure
+        private ArchiveHeaderData _archiveHeaderData; // defines an archive header data structure
+
         /// <summary>
         /// Gets the file data of this file
         /// </summary>
@@ -66,6 +71,15 @@ namespace SATools.IMG.Utility
         public ArchiveFileData FileData 
         {
             get => _archiveData;
+        }
+
+        /// <summary>
+        /// Gets the archive header data of this file
+        /// </summary>
+        /// <value></value>
+        public ArchiveHeaderData HeaderData 
+        {
+            get => _archiveHeaderData;
         }
 
         private ArchiveFile() { /* private constructor used only for singleton purposes to avoid problems */ }
@@ -315,8 +329,7 @@ namespace SATools.IMG.Utility
                         }
                         else 
                         {
-                            ArchiveHeaderData headerData; // creates a ArchiveHeaderData object that defines the containers for the data that later will be processed
-                            VerifyArchiveData(tArchive, out headerData, tEncoding); // verifies the header and each directory block based on the target archive and default encoding to headerData
+                            VerifyArchiveData(tArchive, out _archiveHeaderData, tEncoding); // verifies the header and each directory block based on the target archive and default encoding to _archiveHeaderData
                         }
                     }
                 }
