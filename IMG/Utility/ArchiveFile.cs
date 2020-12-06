@@ -24,7 +24,13 @@ namespace SATools.IMG.Utility
     /// </summary>
     public struct ArchiveFileData
     {
+        /// <summary>
+        /// Available files inside the archive
+        /// </summary>
         public string[] ArchiveFiles;
+        /// <summary>
+        /// Available file relatives inside the archive
+        /// </summary>
         public string[] ArchiveRelatives;
     }
 
@@ -33,10 +39,22 @@ namespace SATools.IMG.Utility
     /// </summary>
     public struct ArchiveHeaderData 
     {
+        /// <summary>
+        /// Version segment
+        /// </summary>
         public byte[] Version;
+        /// <summary>
+        /// Internal data segment
+        /// </summary>
         public byte[] InternalData;
 
+        /// <summary>
+        /// Directory block segment
+        /// </summary>
         public byte[] DirectoryBlockData;
+        /// <summary>
+        /// Raw name segment
+        /// </summary>
         public byte[] RawNameData;
     }
 
