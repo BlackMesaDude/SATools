@@ -30,7 +30,6 @@ namespace SATools.IMG.Types
         private int _entryLength; // entry length
 
         private string _fullEntryName; // entry full name
-
         private bool _isNew, _isAvailable = true; // defines wheter or not the entry is new and available for processing
 
         #region Getter(s) and Setter(s)
