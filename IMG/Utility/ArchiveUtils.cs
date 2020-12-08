@@ -23,29 +23,48 @@ namespace SATools.IMG.Utility
     public static class ArchiveUtils 
     {
         /// <summary>
-        /// Gets or verifies a nullable string length from a buffer
+        /// Verifies a null-terminated string total length based on the given buffer and offset
         /// </summary>
         /// <param name="bytes">Buffer where the nullable string should be taken</param>
+        /// <param name="offset">Offset where the search should start</param>
         /// <returns></returns>
-        public static int GetNullableStringBytes(byte[] buffer)
+        public static int NullTerminatedSearch(byte[] buffer, int offset = 0)
         {
-            int len = 0; // temporary variable that will store the length of the string
-            // if the buffer isn't null or empty
-            if(buffer != null)
+            int len = offset; // temporary variable that will store the length of the string
+
+            while(len < buffer?.Length && buffer[len] != 0)
             {
-                len = buffer.Length; // assign the buffer length to the temporary variable
-                for(int i = 0; i < buffer.Length; i++)
-                { 
-                    // if the buffer n element is 0 then
-                    if(buffer[i] == 0)
-                    {
-                        len = i; // assign the value to the length
-                        break; // exit from the loop
-                    }
-                }
+                len++; // while the length is less than the buffer length and the buffer element (based on the lenght value as index) is not equal to 0 then augment len by one
             }
 
             return len; // returns the nullable string length
+        }
+
+        /// <summary>
+        /// Verifies a null-terminated string total length based on the given buffer and offset <br/>
+        /// <b>This method uses unsafe code, it can't cause major problems but <i>discretion is advised</i>.</b>
+        /// </summary>
+        /// <param name="buffer">Buffer where the nullable string should be taken</param>
+        /// <param name="offset">Offset where the search should start</param>
+        /// <returns></returns>
+        public static string UnsafeNullTerminatedSearch(byte[] buffer, int offset) 
+        {
+            int len = offset; // temporary variable that will store the length of the string
+
+            while(len < buffer?.Length && buffer[len] != 0)
+            {
+                len++; // while the length is less than the buffer length and the buffer element (based on the lenght value as index) is not equal to 0 then augment len by one
+            }
+
+            /* to disable unsafe code head to the csproj file and set AllowUnsafeBlocks to false */
+            unsafe
+            {
+                // creates a byte pointer to the buffer (because its marked as fixed the garbage collector won't reallocate it)
+                fixed(byte* ascii = buffer)
+                {
+                    return new String((sbyte*) ascii, offset, len - offset); // returns a new string based on the byte pointer, at offset and length = len - offset
+                }
+            }
         }
 
         /// <summary>
