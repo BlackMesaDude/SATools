@@ -17,8 +17,6 @@
 
 ## Why this library? 
 
-<img align="left" width="200" src="https://github.com/BlackMesaDude/SATools/blob/main/.github/workflows/ryder.png"> 
-
 This library, as said before, is meant to help the mod. developer with his work by allowing him the use of a **CLR language as an intermediary** (in this case **C#**). This allows the creator to use a more solid and safe language to access the game. 
 
 This library also includes or allows to *hook* itself to the game at *runtime* allowing to use just **C#** as the scripting language.
