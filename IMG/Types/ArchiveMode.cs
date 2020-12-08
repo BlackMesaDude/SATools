@@ -19,8 +19,17 @@ namespace SATools.IMG.Types
     /// </summary>
     public enum ArchiveMode 
     {
+        /// <summary>
+        /// Read-Mode only
+        /// </summary>
         Read,
+        /// <summary>
+        /// Creates the archive
+        /// </summary>
         Create,
+        /// <summary>
+        /// Updates the archive
+        /// </summary>
         Update
     }
 }
