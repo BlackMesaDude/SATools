@@ -349,6 +349,10 @@ namespace SATools.IMG.Utility
                         {
                             VerifyArchiveData(tArchive, out _archiveHeaderData, tEncoding); // verifies the header and each directory block based on the target archive and default encoding to _archiveHeaderData
                         }
+                    } 
+                    else 
+                    {
+                        Console.WriteLine($"The archive doesn't exists or corrupted. ArchiveMode[{mode.ToString()}]");
                     }
                 }
                 else 
@@ -399,7 +403,7 @@ namespace SATools.IMG.Utility
 
                     VerifyHeader(targetArchive.ArchiveStream, out data.DirectoryBlockData, 2); // verifies the directory block data again
                     VerifyHeader(targetArchive.ArchiveStream, out data.RawNameData, 24); // gets the directory block raw name
-                    int nName = ArchiveUtils.GetNullableStringBytes(data.RawNameData); // checks the nullable literal string name based on the raw one
+                    int nName = ArchiveUtils.NullTerminatedSearch(data.RawNameData); // checks the nullable literal string name based on the raw one
 
                     if(nName > 0)
                     {
@@ -423,7 +427,7 @@ namespace SATools.IMG.Utility
         /// <returns>Returns a long value that defines the length of the file</returns>
         private long GetFileLength(string file) 
         {
-            return new FileInfo(file).Length;
+            return new FileInfo(file).Length; // with the help of FileInfo, return the length of the file
         }
         
         /// <summary>
@@ -435,8 +439,9 @@ namespace SATools.IMG.Utility
         /// <returns></returns>
         internal bool VerifyHeader(Stream stream, out byte[] buffer, int size = 4)
         {
-            buffer = new byte[size];  
-            return stream.Read(buffer, 0, buffer.Length) == buffer.Length;
+            buffer = new byte[size]; // initialize the buffer based on the given size
+
+            return stream.Read(buffer, 0, buffer.Length) == buffer.Length; // read the data on the buffer and return true or false if the operation was succesfull
         }
     }
 }
