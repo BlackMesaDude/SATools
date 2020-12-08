@@ -39,7 +39,7 @@ The library is on a costant update and always announces changes and issues allow
 
 ## How it works
 
-For any development purpose, please visit the wiki!
+What you're going to read here is just a brief description of how everything works, for more information **visit the wiki**!
 
 ### The IMG Archive
 
