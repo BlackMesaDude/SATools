@@ -1,3 +1,5 @@
+h()
+
 # OPCODES TO HUMAN READABLE
 
 0001=wait
