@@ -35,7 +35,7 @@ Besides of the resource management and scripting, the library has a **built-in t
 
 Talking about the scripting side, some diassemblers used for the SCM language doesn't know how to approach **native data** from the engine preventing the creator to have a more *in-depth* access to the game logic. This library offers a ready-to-use diassembler for the SCM language that not only reverses the code but *allows to handle* the native data. 
 
-The library is on a costant update and always announces changes and issues allowing the creator to say up-to-date!
+The library is on a constant update and always announces changes and issues allowing the creator to stay up-to-date!
 
 ## How it works
 
